@@ -119,6 +119,7 @@ public class InfiniteTerrain : MonoBehaviour {
             meshObject.transform.position = positionV3 * scale;
             meshObject.transform.parent = parent;
             meshObject.transform.localScale = Vector3.one * scale;
+            
 
             if (generateWaterPlane)
             {
@@ -127,10 +128,14 @@ public class InfiniteTerrain : MonoBehaviour {
                 waterMeshRenderer = water.AddComponent<MeshRenderer>();
 
                 waterMeshRenderer.material = waterMaterial;
-                
-                water.transform.position = positionV3;
+
+                water.transform.position = positionV3 * scale / 2;
+                water.transform.localScale = Vector3.one * scale;
                 water.transform.parent = meshObject.transform;
-                water.transform.localScale = Vector3.one;
+
+                waterMeshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+
+
             }
 
             // Initially hide chunk, and let the update method decide if the chunk must be shown.
