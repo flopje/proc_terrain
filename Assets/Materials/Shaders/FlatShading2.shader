@@ -4,7 +4,9 @@
 	{
 		_Color("Color", Color) = (1,0,0,1)
 		_SpecColor("Specular Material Color", Color) = (1,1,1,1)
+		_MainTex("Color (RGB) Alpha (A)", 2D) = "white"
 		_Shininess("Shininess", Float) = 1.0
+		_OpacityWater("Water opacity", Float) = 1.0
 		_WaveLength("Wave length", Float) = 0.5
 		_WaveHeight("Wave height", Float) = 0.5
 		_WaveSpeed("Wave speed", Float) = 1.0
@@ -22,12 +24,13 @@
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile_fwdbase
+			#pragma Lambert alpha
 
 			#include "UnityCG.cginc"
 			#include "AutoLight.cginc"
 
 			// Physically based Standard lighting model, and enable shadows on all light types
-			//#pragma  surf Standard fullforwardshadows
+			#pragma surf Standard fullforwardshadows
 
 			// Use shader model 3.0 target, to get nicer looking lighting
 			#pragma target 3.0
@@ -47,6 +50,7 @@
 			float _WaveSpeed;
 			float _RandomHeight;
 			float _RandomSpeed;
+			float _OpacityWater;
 
 			uniform float4 _LightColor0;
 
@@ -83,10 +87,7 @@
 				o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
 				o.wPos = mul(_Object2World, v.vertex);
 				TRANSFER_VERTEX_TO_FRAGMENT(o);
-
-				
-
-
+				//o.Alpha = _MainText.a;
 				return o;
 			}
 
@@ -105,8 +106,8 @@
 				attenuation * _LightColor0.rgb * _Color.rgb
 				* max(0.0, dot(vn, lightDirection * -1)); //For some reason this line will always be 0 thus making diffuseReflection 0
 
-				fixed4 texcol = tex2D(_MainTex, IN.uv);
-				return fixed4(texcol * (ambientLighting + diffuseReflection), 1.0);
+				fixed4 texcol = tex2D(_MainTex, IN.uv).a;
+				return fixed4(texcol * (ambientLighting + diffuseReflection), _OpacityWater);
 			}
 
 			ENDCG
