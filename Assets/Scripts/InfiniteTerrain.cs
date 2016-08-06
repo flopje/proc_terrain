@@ -91,6 +91,7 @@ public class InfiniteTerrain : MonoBehaviour {
 
         MeshRenderer meshRenderer;
         MeshFilter meshFilter;
+        MeshCollider meshCollider;
 
         MeshFilter waterMeshFilter;
         MeshRenderer waterMeshRenderer;
@@ -113,6 +114,7 @@ public class InfiniteTerrain : MonoBehaviour {
             meshObject = new GameObject("Terrain Chunk");
             meshRenderer = meshObject.AddComponent<MeshRenderer>();
             meshFilter = meshObject.AddComponent<MeshFilter>();
+            meshCollider = meshObject.AddComponent<MeshCollider>();
 
             meshRenderer.material = material;
 
@@ -186,6 +188,8 @@ public class InfiniteTerrain : MonoBehaviour {
                         previousLODIndex = lodIndex;
                         meshFilter.mesh = lodMesh.mesh;
                         waterMeshFilter.mesh = lodMesh.waterMesh;
+                        meshCollider.sharedMesh = null;
+                        meshCollider.sharedMesh = lodMesh.mesh;
 
                     }
                     else if (!lodMesh.hasRequestMesh)
