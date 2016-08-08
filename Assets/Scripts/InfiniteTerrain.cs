@@ -102,9 +102,12 @@ public class InfiniteTerrain : MonoBehaviour {
         bool mapDataReceived;
         int previousLODIndex = -1;
 
+        bool generateWaterPlane;
+
         public TerrainChunk(Vector2 coord, int size, LODInfo[] detailLevels, Transform parent, Material material, bool generateWaterPlane, Material waterMaterial)
         {
             this.detailLevels = detailLevels;
+            this.generateWaterPlane = generateWaterPlane;
 
             position = coord * size;
             bounds = new Bounds(position, Vector2.one * size);
@@ -144,7 +147,7 @@ public class InfiniteTerrain : MonoBehaviour {
             lodMeshes = new LODMesh[detailLevels.Length];
             for(int i = 0; i < detailLevels.Length; i++)
             {
-                lodMeshes[i] = new LODMesh(detailLevels[i].lod, UpdateTerrainChunk);
+                lodMeshes[i] = new LODMesh(detailLevels[i].lod, UpdateTerrainChunk, generateWaterPlane);
             }
 
             mapGenerator.RequestMapData(position, OnMapDataReceived);
@@ -185,7 +188,10 @@ public class InfiniteTerrain : MonoBehaviour {
                     {
                         previousLODIndex = lodIndex;
                         meshFilter.mesh = lodMesh.mesh;
-                        waterMeshFilter.mesh = lodMesh.waterMesh;
+                        if (generateWaterPlane)
+                        {
+                            waterMeshFilter.mesh = lodMesh.waterMesh;
+                        }
 
                     }
                     else if (!lodMesh.hasRequestMesh)
@@ -230,11 +236,12 @@ public class InfiniteTerrain : MonoBehaviour {
         public bool hasMesh;
 
         MapData mapData;
+        bool generateWaterPlane;
 
         int lod;
         System.Action updateCallback;
 
-        public LODMesh(int lod, System.Action updateCallback)
+        public LODMesh(int lod, System.Action updateCallback, bool generateWaterPlane)
         {   
             this.lod = lod;
             this.updateCallback = updateCallback;
@@ -244,13 +251,24 @@ public class InfiniteTerrain : MonoBehaviour {
         {
             this.mapData = mapData;
             hasRequestMesh = true;
+
             mapGenerator.RequestMeshData(this.mapData, lod, OnMeshDataReceived);
+            
         }
 
         void OnMeshDataReceived(MeshData meshData)
         {
             mesh = meshData.CreateMesh();
-            mapGenerator.RequestWaterMeshData(mapData, lod, OnMeshDataReceived);
+
+            if (generateWaterPlane)
+            {
+                mapGenerator.RequestWaterMeshData(mapData, lod, OnMeshDataReceived);
+            }
+            else
+            {
+                hasMesh = true;
+                updateCallback();
+            }
         }
 
         void OnMeshDataReceived(WaterMeshData meshData)
