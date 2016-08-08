@@ -137,7 +137,6 @@ public class InfiniteTerrain : MonoBehaviour {
 
                 waterMeshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 
-
             }
 
             // Initially hide chunk, and let the update method decide if the chunk must be shown.
@@ -189,7 +188,7 @@ public class InfiniteTerrain : MonoBehaviour {
                         meshFilter.mesh = lodMesh.mesh;
                         waterMeshFilter.mesh = lodMesh.waterMesh;
                         meshCollider.sharedMesh = null;
-                        meshCollider.sharedMesh = lodMesh.mesh;
+                        meshCollider.sharedMesh = meshFilter.mesh;
 
                     }
                     else if (!lodMesh.hasRequestMesh)
