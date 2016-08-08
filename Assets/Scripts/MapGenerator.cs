@@ -157,7 +157,7 @@ public class MapGenerator : MonoBehaviour {
    MapData generateMapData(Vector2 centre)
     {
         // Adding broderTriangles to correctly calculate normals: -> mapChunkSize + 2 (+2 == border, 1 on each side)
-        float[,] noiseMap = Noise.generateNoiseMap(mapChunkSize + 2, mapChunkSize + 2, noiseScale, seed, octaves, persistance, lacunarity, centre + offset, normalizeMode);
+        float[,] noiseMap = Noise.generateNoiseMap(mapChunkSize+2, mapChunkSize+2, noiseScale, seed, octaves, persistance, lacunarity, centre + offset, normalizeMode);
         Color[] colorMap = CreateColorMap(noiseMap, mapChunkSize, mapChunkSize);
 
         return new MapData(noiseMap, colorMap);         
