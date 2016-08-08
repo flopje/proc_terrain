@@ -68,7 +68,7 @@ public static class MeshGenerator {
                 {
                     int a = vertexIndicesMap[x, y];
                     int b = vertexIndicesMap[x + meshSimplificationIncrement, y];
-                    int c = vertexIndicesMap[x, y] + meshSimplificationIncrement;
+                    int c = vertexIndicesMap[x, y + meshSimplificationIncrement];
                     int d = vertexIndicesMap[x + meshSimplificationIncrement, y + meshSimplificationIncrement];
 
                     meshData.AddTriangle(a, d, c);
