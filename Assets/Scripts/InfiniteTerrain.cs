@@ -193,6 +193,9 @@ public class InfiniteTerrain : MonoBehaviour
                     {
                         previousLODIndex = lodIndex;
                         meshFilter.mesh = lodMesh.mesh;
+                        meshCollider.sharedMesh = null;
+                        meshCollider.sharedMesh = meshFilter.mesh;
+
                         if (generateWaterPlane)
                         {
                             waterMeshFilter.mesh = lodMesh.waterMesh;
@@ -250,6 +253,7 @@ public class InfiniteTerrain : MonoBehaviour
         {
             this.lod = lod;
             this.updateCallback = updateCallback;
+            this.generateWaterPlane = generateWaterPlane;
         }
 
         public void RequestMesh(MapData mapData)
