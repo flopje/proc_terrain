@@ -119,8 +119,9 @@ public class InfiniteTerrain : MonoBehaviour
             meshObject = new GameObject("Terrain Chunk");
             meshRenderer = meshObject.AddComponent<MeshRenderer>();
             meshFilter = meshObject.AddComponent<MeshFilter>();
-            meshCollider = meshObject.AddComponent<MeshCollider>();
-
+            //meshCollider = meshObject.AddComponent<MeshCollider>();
+            //meshCollider.sharedMesh = null;
+            meshObject.isStatic = true;
 
             meshRenderer.material = material;
 
@@ -192,13 +193,14 @@ public class InfiniteTerrain : MonoBehaviour
                     if (lodMesh.hasMesh)
                     {
                         previousLODIndex = lodIndex;
-                        meshFilter.mesh = lodMesh.mesh;
-                        meshCollider.sharedMesh = null;
-                        meshCollider.sharedMesh = meshFilter.mesh;
+                        meshFilter.sharedMesh = lodMesh.mesh;
+                        meshCollider = meshObject.AddComponent<MeshCollider>();
+                        //meshCollider.sharedMesh = null;
+                        meshCollider.sharedMesh = lodMesh.mesh;
 
                         if (generateWaterPlane)
                         {
-                            waterMeshFilter.mesh = lodMesh.waterMesh;
+                            waterMeshFilter.sharedMesh = lodMesh.waterMesh;
                         }
 
                     }
@@ -228,6 +230,7 @@ public class InfiniteTerrain : MonoBehaviour
         public void SetVisible(bool visible)
         {
             meshObject.SetActive(visible);
+            
         }
 
         public bool IsVisible()

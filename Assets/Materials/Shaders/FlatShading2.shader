@@ -1,4 +1,4 @@
-﻿Shader "Custom/FlatShading2"
+﻿Shader "Test/FlatShading2"
 {
 	Properties
 	{

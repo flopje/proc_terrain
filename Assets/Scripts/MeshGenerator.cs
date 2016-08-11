@@ -75,20 +75,6 @@ public class MeshData
         triangleIndex += 3;
     }
 
-    //Vector2[] CalculateNormals()
-    //{
-    //    Vector3[] vertexNormals = new Vector3[vertices.Length];
-    //    int triangleCount = triangles.Length / 3;
-
-    //    for (int i = 0; i < triangleCount; i++)
-    //    {
-    //        int normalTrianlgeIndex = i * 3;
-    //        int vertexIndexA = triangles[normalTrianlgeIndex];
-    //        int vertexIndexB = triangles[normalTrianlgeIndex + 1];
-    //        int vertexIndexC = triangles[normalTrianlgeIndex + 2];
-    //    }
-    //}
-
     public Mesh CreateMesh()
     {
         Mesh mesh = new Mesh();
@@ -98,6 +84,7 @@ public class MeshData
 
         // RecalculateNormals needed for correct lighting
         mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
 
         return mesh;
     }
