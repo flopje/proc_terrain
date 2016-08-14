@@ -1,4 +1,4 @@
-﻿Shader "Custom/flat_water" 
+﻿Shader "Flat/flat_water" 
 {
 	Properties
 	{

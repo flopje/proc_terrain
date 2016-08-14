@@ -84,6 +84,7 @@ public class MeshData
 
         // RecalculateNormals needed for correct lighting
         mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
 
         return mesh;
     }
