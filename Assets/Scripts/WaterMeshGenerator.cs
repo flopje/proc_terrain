@@ -22,7 +22,7 @@ public static class WaterMeshGenerator {
         {
             for (int x = 0; x < width; x += meshSimplificationIncrement)
             {
-                meshData.vertices[vertexIndex] = new Vector3(topLeftX + x, 8, topLeftZ - y);
+                meshData.vertices[vertexIndex] = new Vector3(topLeftX + x, 6.87f, topLeftZ - y);
 
                 // UV Index is a percentage based index, value between 0 - 1
                 meshData.uvs[vertexIndex] = new Vector2(x / (float)width, y / (float)height);

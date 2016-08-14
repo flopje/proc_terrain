@@ -194,8 +194,11 @@ public class InfiniteTerrain : MonoBehaviour
                     {
                         previousLODIndex = lodIndex;
                         meshFilter.sharedMesh = lodMesh.mesh;
-                        meshCollider = meshObject.AddComponent<MeshCollider>();
-                        //meshCollider.sharedMesh = null;
+                        if (meshCollider == null)
+                        {
+                            meshCollider = meshObject.AddComponent<MeshCollider>();
+                        }
+                        meshCollider.sharedMesh = null;
                         meshCollider.sharedMesh = lodMesh.mesh;
 
                         if (generateWaterPlane)
