@@ -65,7 +65,7 @@
 
 					float3 diffuseReflection =
 						attenuation * _LightColor0.rgb * _Color.rgb
-						* max(0.0, dot(vn, lightDirection * -1)); //For some reason this line will always be 0 thus making diffuseReflection 0
+						* max(0.0, dot(vn, lightDirection)); //For some reason this line will always be 0 thus making diffuseReflection 0
 
 					fixed4 texcol = tex2D(_MainTex, IN.uv);
 					return fixed4(texcol * (ambientLighting + diffuseReflection), 1.0);
