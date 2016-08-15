@@ -7,7 +7,7 @@ public class MapGenerator : MonoBehaviour {
 
     public enum DrawMode
     {
-        NoiseMap, ColorMap, Mesh
+        NoiseMap, ColorMap, Mesh, FallOfMap
     }
 
     // Which style preview we want, default is noiseMap.
@@ -17,6 +17,8 @@ public class MapGenerator : MonoBehaviour {
 
     // Should the Unity preview be directly updated?
     public bool autoUpdate = true;
+
+    public bool useFallOfMap;
 
     // Max square map size is 255 -> max vertices per mesh 65000 (a litte more)
     // for formula -> width -1 -> 241 - 1 = 240, whcihc in turn gives us the most LODs. 
@@ -40,9 +42,16 @@ public class MapGenerator : MonoBehaviour {
 
     public TerrainType[] regions;
 
+    float[,] fallOfMap;
+
     Queue<MapThreadInfo<MapData>> mapDataThreadInfoQueue = new Queue<MapThreadInfo<MapData>>();
     Queue<MapThreadInfo<MeshData>> meshDataThreadInfoQueue = new Queue<MapThreadInfo<MeshData>>();
     Queue<MapThreadInfo<WaterMeshData>> waterMeshDataThreadInfoQueue = new Queue<MapThreadInfo<WaterMeshData>>();
+
+    void Awake()
+    {
+        fallOfMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
+    }
 
     public void DrawMapInEditor()
     {
@@ -63,6 +72,10 @@ public class MapGenerator : MonoBehaviour {
                 MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD),
                 TextureGenerator.TextureFromColorMap(mapData.colorMap, mapChunkSize, mapChunkSize)
                 );
+        }
+        else if (drawMode == DrawMode.FallOfMap)
+        {
+            mapDisplay.DrawTexture(TextureGenerator.TextureFromHeightMap(fallOfMap));
         }
     }
 
@@ -170,6 +183,11 @@ public class MapGenerator : MonoBehaviour {
         {
             for (int x = 0; x < mapWidth; x++)
             {
+                if (useFallOfMap)
+                {
+                    noiseMap[x, y] = Mathf.Clamp01(noiseMap[x, y] - fallOfMap[x, y]);
+                }
+
                 float currentHeight = noiseMap[x, y];
 
                 for (int i = 0; i < regions.Length; i++)
@@ -217,6 +235,8 @@ public class MapGenerator : MonoBehaviour {
         {
             octaves = 0;
         }
+
+        fallOfMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
     }
 }
 
