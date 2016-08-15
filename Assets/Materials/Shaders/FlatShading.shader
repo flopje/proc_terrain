@@ -56,7 +56,7 @@
 				{
 					float3 x = ddx(IN.wPos);
 					float3 y = ddy(IN.wPos);
-					float3 vn = normalize(cross(x, y));
+					float3 vn = -normalize(cross(x, y));
 
 					float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
 					float attenuation = LIGHT_ATTENUATION(IN);
