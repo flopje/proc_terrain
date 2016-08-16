@@ -29,6 +29,14 @@
 
 				sampler2D _MainTex;
 				uniform float4 _Color;
+				
+				#if UNITY_UV_STARTS_AT_TOP
+				/*if (_MainTex_TexelSize.y < 0) 
+				{
+					uv.y = 1 - uv.y;
+				}*/
+						
+				#endif
 
 				struct v2f
 				{
@@ -41,13 +49,27 @@
 
 				float4 _MainTex_ST;
 
+				float4 vert1(float2 uv : TEXCOORD0) : SV_POSITION
+				{
+					float4 pos;
+					pos.xy = uv;
+					// we're rendering with upside-down flipped projection,
+					// so flip the vertical UV coordinate too
+					if (_ProjectionParams.x < 0)
+						pos.y = 1 - pos.y;
+					pos.z = 0;
+					pos.w = 1;
+					return pos;
+				}
+
 				v2f vert(appdata_full v)
 				{
 					v2f o;
-					o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+					
 					o.norm = v.normal;
 					o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
 					o.wPos = mul(_Object2World, v.vertex);
+					o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 					TRANSFER_VERTEX_TO_FRAGMENT(o);
 					return o;
 				}
@@ -56,7 +78,11 @@
 				{
 					float3 x = ddx(IN.wPos);
 					float3 y = ddy(IN.wPos);
-					float3 vn = -normalize(cross(x, y));
+					float3 vn = -normalize(cross(x, y));;
+
+					#if UNITY_UV_STARTS_AT_TOP
+						vn = normalize(cross(x, y));
+					#endif
 
 					float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
 					float attenuation = LIGHT_ATTENUATION(IN);

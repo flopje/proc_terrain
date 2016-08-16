@@ -95,7 +95,11 @@
 			{
 				float3 x = ddx(IN.wPos);
 				float3 y = ddy(IN.wPos);
-				float3 vn = normalize(cross(x, y));
+				float3 vn = -normalize(cross(x, y));
+
+				#if UNITY_UV_STARTS_AT_TOP
+					vn = normalize(cross(x, y));
+				#endif
 
 				float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
 				float attenuation = LIGHT_ATTENUATION(IN);
@@ -104,7 +108,7 @@
 
 				float3 diffuseReflection =
 				attenuation * _LightColor0.rgb * _Color.rgb
-				* max(0.0, dot(vn, lightDirection * -1)); //For some reason this line will always be 0 thus making diffuseReflection 0
+				* max(0.0, dot(vn, lightDirection)); //For some reason this line will always be 0 thus making diffuseReflection 0
 
 				fixed4 texcol = tex2D(_MainTex, IN.uv).a;
 				return fixed4(texcol * (ambientLighting + diffuseReflection), _OpacityWater);
