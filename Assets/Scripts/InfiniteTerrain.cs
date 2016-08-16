@@ -119,9 +119,6 @@ public class InfiniteTerrain : MonoBehaviour
             meshObject = new GameObject("Terrain Chunk");
             meshRenderer = meshObject.AddComponent<MeshRenderer>();
             meshFilter = meshObject.AddComponent<MeshFilter>();
-            //meshCollider = meshObject.AddComponent<MeshCollider>();
-            //meshCollider.sharedMesh = null;
-            meshObject.isStatic = true;
 
             meshRenderer.material = material;
 
@@ -143,8 +140,7 @@ public class InfiniteTerrain : MonoBehaviour
                 water.transform.parent = meshObject.transform;
 
                 waterMeshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-
-
+                
             }
 
             // Initially hide chunk, and let the update method decide if the chunk must be shown.
