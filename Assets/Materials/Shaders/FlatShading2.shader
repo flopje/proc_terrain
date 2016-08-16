@@ -1,4 +1,4 @@
-﻿Shader "Test/FlatShading2"
+﻿Shader "Flat/flat_water_simple"
 {
 	Properties
 	{
@@ -24,13 +24,9 @@
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile_fwdbase
-			#pragma Lambert alpha
 
 			#include "UnityCG.cginc"
 			#include "AutoLight.cginc"
-
-			// Physically based Standard lighting model, and enable shadows on all light types
-			#pragma surf Standard fullforwardshadows
 
 			// Use shader model 3.0 target, to get nicer looking lighting
 			#pragma target 3.0

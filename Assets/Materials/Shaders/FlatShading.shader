@@ -1,4 +1,4 @@
-﻿Shader "Custom/FlatShading" {
+﻿Shader "Flat/FlatShading" {
 		Properties
 		{
 			_Color("Color", Color) = (1,1,1,1)
