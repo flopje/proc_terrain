@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityStandardAssets;
+using UnityStandardAssets.Water;
 
-public class InfiniteTerrain : MonoBehaviour {
+public class InfiniteTerrain : MonoBehaviour
+{
 
     public LODInfo[] detailLevels;
     public Transform viewer;
@@ -15,7 +18,7 @@ public class InfiniteTerrain : MonoBehaviour {
 
     const float viewerMoveThresholdForChunkUpdate = 25f;
     const float sqrViewerMoveThresholdForChunkUpdate = viewerMoveThresholdForChunkUpdate * viewerMoveThresholdForChunkUpdate;
-    
+
     public static float maxViewDistance;
 
     public static Vector2 viewerPosition;
@@ -64,7 +67,7 @@ public class InfiniteTerrain : MonoBehaviour {
         int currentChunkCoordX = Mathf.RoundToInt(viewerPosition.x / chunkSize);
         int currentChunkCoordY = Mathf.RoundToInt(viewerPosition.y / chunkSize);
 
-        for( int yOffset = -chunksVisibleInViewDistance; yOffset <= chunksVisibleInViewDistance; yOffset++)
+        for (int yOffset = -chunksVisibleInViewDistance; yOffset <= chunksVisibleInViewDistance; yOffset++)
         {
             for (int xOffset = -chunksVisibleInViewDistance; xOffset <= chunksVisibleInViewDistance; xOffset++)
             {
@@ -86,11 +89,14 @@ public class InfiniteTerrain : MonoBehaviour {
     public class TerrainChunk
     {
         GameObject meshObject;
+        GameObject waterMeshObject;
         Vector2 position;
         Bounds bounds;
 
         MeshRenderer meshRenderer;
         MeshFilter meshFilter;
+        MeshCollider meshCollider;
+
 
         MeshFilter waterMeshFilter;
         MeshRenderer waterMeshRenderer;
@@ -117,35 +123,36 @@ public class InfiniteTerrain : MonoBehaviour {
             meshRenderer = meshObject.AddComponent<MeshRenderer>();
             meshFilter = meshObject.AddComponent<MeshFilter>();
 
-            meshRenderer.material = material;
+            meshRenderer.sharedMaterial = material;
 
             meshObject.transform.position = positionV3 * scale;
             meshObject.transform.parent = parent;
             meshObject.transform.localScale = Vector3.one * scale;
-            
+
 
             if (generateWaterPlane)
             {
-                GameObject water = new GameObject("Water");
-                waterMeshFilter = water.AddComponent<MeshFilter>();
-                waterMeshRenderer = water.AddComponent<MeshRenderer>();
+                waterMeshObject = new GameObject("Tile");
+                waterMeshFilter = waterMeshObject.AddComponent<MeshFilter>();
+                waterMeshRenderer = waterMeshObject.AddComponent<MeshRenderer>();
 
                 waterMeshRenderer.material = waterMaterial;
 
-                water.transform.position = positionV3 * scale / 2;
-                water.transform.localScale = Vector3.one * scale;
-                water.transform.parent = meshObject.transform;
+                waterMeshObject.transform.position = positionV3 * scale;
+                waterMeshObject.transform.localScale = Vector3.one * scale;
+                waterMeshObject.transform.parent = GameObject.Find("Water4Advanced").transform;
 
                 waterMeshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 
-
+                waterMeshObject.AddComponent<WaterTile>();
+                
             }
 
             // Initially hide chunk, and let the update method decide if the chunk must be shown.
             SetVisible(false);
 
             lodMeshes = new LODMesh[detailLevels.Length];
-            for(int i = 0; i < detailLevels.Length; i++)
+            for (int i = 0; i < detailLevels.Length; i++)
             {
                 lodMeshes[i] = new LODMesh(detailLevels[i].lod, UpdateTerrainChunk, generateWaterPlane);
             }
@@ -166,14 +173,14 @@ public class InfiniteTerrain : MonoBehaviour {
             float viewDistanceFromNearestEdge = Mathf.Sqrt(bounds.SqrDistance(viewerPosition));
             bool visible = viewDistanceFromNearestEdge <= maxViewDistance;
 
-            if(visible)
+            if (visible)
             {
                 int lodIndex = 0;
-                for (int i = 0; i < detailLevels.Length-1; i++)
+                for (int i = 0; i < detailLevels.Length - 1; i++)
                 {
-                    if(viewDistanceFromNearestEdge > detailLevels[i].visibleDistThreshold)
+                    if (viewDistanceFromNearestEdge > detailLevels[i].visibleDistThreshold)
                     {
-                        lodIndex = i+1;
+                        lodIndex = i + 1;
                     }
                     else
                     {
@@ -191,6 +198,18 @@ public class InfiniteTerrain : MonoBehaviour {
                         if (generateWaterPlane)
                         {
                             waterMeshFilter.mesh = lodMesh.waterMesh;
+                        }
+                        meshFilter.sharedMesh = lodMesh.mesh;
+                        if (meshCollider == null)
+                        {
+                            meshCollider = meshObject.AddComponent<MeshCollider>();
+                        }
+                        meshCollider.sharedMesh = null;
+                        meshCollider.sharedMesh = lodMesh.mesh;
+
+                        if (generateWaterPlane)
+                        {
+                            waterMeshFilter.sharedMesh = lodMesh.waterMesh;
                         }
 
                     }
@@ -220,11 +239,19 @@ public class InfiniteTerrain : MonoBehaviour {
         public void SetVisible(bool visible)
         {
             meshObject.SetActive(visible);
+            waterMeshObject.SetActive(visible);
+
+
         }
 
         public bool IsVisible()
         {
             return meshObject.activeSelf;
+        }
+
+        public bool IsWaterVisible()
+        {
+            return waterMeshObject.activeSelf;
         }
     }
 
@@ -242,9 +269,14 @@ public class InfiniteTerrain : MonoBehaviour {
         System.Action updateCallback;
 
         public LODMesh(int lod, System.Action updateCallback, bool generateWaterPlane)
+<<<<<<< HEAD
         {   
+=======
+        {
+>>>>>>> master
             this.lod = lod;
             this.updateCallback = updateCallback;
+            this.generateWaterPlane = generateWaterPlane;
         }
 
         public void RequestMesh(MapData mapData)
@@ -253,7 +285,11 @@ public class InfiniteTerrain : MonoBehaviour {
             hasRequestMesh = true;
 
             mapGenerator.RequestMeshData(this.mapData, lod, OnMeshDataReceived);
+<<<<<<< HEAD
             
+=======
+
+>>>>>>> master
         }
 
         void OnMeshDataReceived(MeshData meshData)
@@ -286,5 +322,5 @@ public class InfiniteTerrain : MonoBehaviour {
         public int lod;
         public float visibleDistThreshold;
     }
-    
+
 }

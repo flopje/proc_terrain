@@ -22,24 +22,31 @@ public static class WaterMeshGenerator {
         {
             for (int x = 0; x < width; x += meshSimplificationIncrement)
             {
-                meshData.vertices[vertexIndex] = new Vector3(topLeftX + x, 8, topLeftZ - y);
+                //if (heightMap[x, y] < 0.5 )//&&  (x + 1 < width && heightMap[x + 1, y] < 0.5) || (y + 1 < height && heightMap[x, y + 1] < 0.5))//)
+                //{
+                    meshData.vertices[vertexIndex] = new Vector3(topLeftX + x, 6.34f, topLeftZ - y);
 
-                // UV Index is a percentage based index, value between 0 - 1
-                meshData.uvs[vertexIndex] = new Vector2(x / (float)width, y / (float)height);
+                    // UV Index is a percentage based index, value between 0 - 1
+                    meshData.uvs[vertexIndex] = new Vector2(x / (float)width, y / (float)height);
 
-                // Right and bottom vertices can be ignored, as previously indexed vertices have drawn the triangles to these points, and none originate from them
-                // i  , i+1  , i+2
-                // i+w, i+w+1, i+w+2
-                // 
-                // i+2 and i+w+2  don't draw any triangles to their right or bottom, these are allready create when i+1 drawn both his triangles to right bottom 
-                // 
-                // Draws the needed triangles, 2 per vertex (creating a square)
-                // Drawing of a triangle allways happens clockwise.
-                if (x < width - 1 && y < height - 1)
-                {
-                    meshData.AddTriangle(vertexIndex, vertexIndex + verticesPerLine + 1, vertexIndex + verticesPerLine);
-                    meshData.AddTriangle(vertexIndex + verticesPerLine + 1, vertexIndex, vertexIndex + 1);
-                }
+                    // Right and bottom vertices can be ignored, as previously indexed vertices have drawn the triangles to these points, and none originate from them
+                    // i  , i+1  , i+2
+                    // i+w, i+w+1, i+w+2
+                    // 
+                    // i+2 and i+w+2  don't draw any triangles to their right or bottom, these are allready create when i+1 drawn both his triangles to right bottom 
+                    // 
+                    // Draws the needed triangles, 2 per vertex (creating a square)
+                    // Drawing of a triangle allways happens clockwise.
+                    if (x < width - 1 && y < height - 1)
+                    {
+                        meshData.AddTriangle(vertexIndex, vertexIndex + verticesPerLine + 1, vertexIndex + verticesPerLine);
+                        meshData.AddTriangle(vertexIndex + verticesPerLine + 1, vertexIndex, vertexIndex + 1);
+                    }
+
+                //} else
+                //{
+                //    break;
+                //}
                 vertexIndex++;
             }
         }

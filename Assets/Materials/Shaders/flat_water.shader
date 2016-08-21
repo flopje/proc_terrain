@@ -1,4 +1,4 @@
-﻿Shader "Custom/flat_water" 
+﻿Shader "Flat/flat_water_test" 
 {
 	Properties
 	{
@@ -157,4 +157,5 @@
 			ENDCG
 		}
 	}
+	FallBack "Diffuse" 
 }

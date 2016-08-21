@@ -28,3 +28,36 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+player_win_x86.pdb
+player_win_x86_s.pdb
+proc_terrain.exe
+proc_terrain_Data/Managed/Assembly-CSharp-firstpass.dll
+proc_terrain_Data/Managed/Assembly-CSharp.dll
+proc_terrain_Data/Managed/Mono.Security.dll
+proc_terrain_Data/Managed/System.Core.dll
+proc_terrain_Data/Managed/System.dll
+proc_terrain_Data/Managed/UnityEngine.Networking.dll
+proc_terrain_Data/Managed/UnityEngine.UI.dll
+proc_terrain_Data/Managed/UnityEngine.dll
+proc_terrain_Data/Managed/UnityEngine.dll.mdb
+proc_terrain_Data/Managed/mscorlib.dll
+proc_terrain_Data/Mono/etc/mono/1.0/DefaultWsdlHelpGenerator.aspx
+proc_terrain_Data/Mono/etc/mono/1.0/machine.config
+proc_terrain_Data/Mono/etc/mono/2.0/Browsers/Compat.browser
+proc_terrain_Data/Mono/etc/mono/2.0/DefaultWsdlHelpGenerator.aspx
+proc_terrain_Data/Mono/etc/mono/2.0/machine.config
+proc_terrain_Data/Mono/etc/mono/2.0/settings.map
+proc_terrain_Data/Mono/etc/mono/2.0/web.config
+proc_terrain_Data/Mono/etc/mono/browscap.ini
+proc_terrain_Data/Mono/etc/mono/config
+proc_terrain_Data/Mono/etc/mono/mconfig/config.xml
+proc_terrain_Data/Mono/mono.dll
+proc_terrain_Data/Resources/unity default resources
+proc_terrain_Data/Resources/unity_builtin_extra
+proc_terrain_Data/globalgamemanagers
+proc_terrain_Data/globalgamemanagers.assets
+proc_terrain_Data/level0
+proc_terrain_Data/level0.resS
+proc_terrain_Data/output_log.txt
+proc_terrain_Data/sharedassets0.assets
+proc_terrain_Data/sharedassets0.assets.resS
