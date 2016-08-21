@@ -269,11 +269,7 @@ public class InfiniteTerrain : MonoBehaviour
         System.Action updateCallback;
 
         public LODMesh(int lod, System.Action updateCallback, bool generateWaterPlane)
-<<<<<<< HEAD
         {   
-=======
-        {
->>>>>>> master
             this.lod = lod;
             this.updateCallback = updateCallback;
             this.generateWaterPlane = generateWaterPlane;
@@ -285,11 +281,6 @@ public class InfiniteTerrain : MonoBehaviour
             hasRequestMesh = true;
 
             mapGenerator.RequestMeshData(this.mapData, lod, OnMeshDataReceived);
-<<<<<<< HEAD
-            
-=======
-
->>>>>>> master
         }
 
         void OnMeshDataReceived(MeshData meshData)
