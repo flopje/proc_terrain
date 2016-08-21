@@ -19,6 +19,7 @@ public class MapGenerator : MonoBehaviour {
     public bool autoUpdate = true;
 
     public bool useFallOfMap;
+    public bool generateWaterMesh;
 
     // Max square map size is 255 -> max vertices per mesh 65000 (a litte more)
     // for formula -> width -1 -> 241 - 1 = 240, whcihc in turn gives us the most LODs. 
@@ -55,7 +56,7 @@ public class MapGenerator : MonoBehaviour {
 
     public void DrawMapInEditor()
     {
-        MapDisplay mapDisplay = FindObjectOfType<MapDisplay>();
+        MeshDisplay mapDisplay = FindObjectOfType<MeshDisplay>();
         MapData mapData = generateMapData(Vector2.zero);
 
         if (drawMode == DrawMode.NoiseMap)
@@ -68,10 +69,22 @@ public class MapGenerator : MonoBehaviour {
         }
         else if (drawMode == DrawMode.Mesh)
         {
-            mapDisplay.DrawMesh(
+            if (generateWaterMesh)
+            {
+                mapDisplay.DrawMesh(
+                MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD),
+                WaterMeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, editorPreviewLOD),
+                TextureGenerator.TextureFromColorMap(mapData.colorMap, mapChunkSize, mapChunkSize)
+                );
+            }
+            else
+            {
+                mapDisplay.DrawMesh(
                 MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD),
                 TextureGenerator.TextureFromColorMap(mapData.colorMap, mapChunkSize, mapChunkSize)
                 );
+            }
+            
         }
         else if (drawMode == DrawMode.FallOfMap)
         {
@@ -246,6 +259,7 @@ public struct TerrainType
     public string name;
     public float height;
     public Color color;
+    public Material material;
 }
 
 public struct MapData

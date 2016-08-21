@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityStandardAssets;
+using UnityStandardAssets.Water;
 
 public class InfiniteTerrain : MonoBehaviour
 {
@@ -87,6 +89,7 @@ public class InfiniteTerrain : MonoBehaviour
     public class TerrainChunk
     {
         GameObject meshObject;
+        GameObject waterMeshObject;
         Vector2 position;
         Bounds bounds;
 
@@ -120,7 +123,7 @@ public class InfiniteTerrain : MonoBehaviour
             meshRenderer = meshObject.AddComponent<MeshRenderer>();
             meshFilter = meshObject.AddComponent<MeshFilter>();
 
-            meshRenderer.material = material;
+            meshRenderer.sharedMaterial = material;
 
             meshObject.transform.position = positionV3 * scale;
             meshObject.transform.parent = parent;
@@ -129,17 +132,19 @@ public class InfiniteTerrain : MonoBehaviour
 
             if (generateWaterPlane)
             {
-                GameObject water = new GameObject("Water");
-                waterMeshFilter = water.AddComponent<MeshFilter>();
-                waterMeshRenderer = water.AddComponent<MeshRenderer>();
+                waterMeshObject = new GameObject("Tile");
+                waterMeshFilter = waterMeshObject.AddComponent<MeshFilter>();
+                waterMeshRenderer = waterMeshObject.AddComponent<MeshRenderer>();
 
                 waterMeshRenderer.material = waterMaterial;
 
-                water.transform.position = positionV3 * scale / 2;
-                water.transform.localScale = Vector3.one * scale;
-                water.transform.parent = meshObject.transform;
+                waterMeshObject.transform.position = positionV3 * scale;
+                waterMeshObject.transform.localScale = Vector3.one * scale;
+                waterMeshObject.transform.parent = GameObject.Find("Water4Advanced").transform;
 
                 waterMeshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+
+                waterMeshObject.AddComponent<WaterTile>();
                 
             }
 
@@ -229,12 +234,19 @@ public class InfiniteTerrain : MonoBehaviour
         public void SetVisible(bool visible)
         {
             meshObject.SetActive(visible);
-            
+            waterMeshObject.SetActive(visible);
+
+
         }
 
         public bool IsVisible()
         {
             return meshObject.activeSelf;
+        }
+
+        public bool IsWaterVisible()
+        {
+            return waterMeshObject.activeSelf;
         }
     }
 

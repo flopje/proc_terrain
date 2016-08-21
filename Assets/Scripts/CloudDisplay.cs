@@ -2,8 +2,9 @@
 using System.Collections;
 using System;
 
-public class MapDisplay : MonoBehaviour {
 
+class CloudDisplay : MonoBehaviour
+{
     public Renderer textureRenderer;
     public MeshFilter meshFilter;
     public MeshRenderer meshRenderer;
@@ -21,6 +22,7 @@ public class MapDisplay : MonoBehaviour {
     public void DrawMesh(MeshData meshData, Texture2D texture)
     {
         meshFilter.sharedMesh = meshData.CreateMesh();
-        meshRenderer.sharedMaterial.mainTexture = texture;   
+        meshRenderer.sharedMaterial.mainTexture = texture;
     }
 }
+
