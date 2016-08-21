@@ -60,7 +60,7 @@ public class CloudGenerator : MonoBehaviour {
         else if (drawMode == DrawMode.Mesh)
         {
             mapDisplay.DrawMesh(
-                MeshGenerator.GenerateTerrainMesh(cloudData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD),
+                TerrainMeshGenerator.GenerateTerrainMesh(cloudData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD),
                 TextureGenerator.TextureFromColorMap(cloudData.colorMap, mapChunkSize, mapChunkSize)
                 );
         }

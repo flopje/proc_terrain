@@ -73,7 +73,7 @@ public class MapGenerator : MonoBehaviour {
             if (generateWaterMesh)
             {
                 mapDisplay.DrawMesh(
-                MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD),
+                TerrainMeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD),
                 WaterMeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, editorPreviewLOD),
                 TextureGenerator.TextureFromColorMap(mapData.colorMap, mapChunkSize, mapChunkSize)
                 );
@@ -81,7 +81,7 @@ public class MapGenerator : MonoBehaviour {
             else
             {
                 mapDisplay.DrawMesh(
-                MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD),
+                TerrainMeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD),
                 TextureGenerator.TextureFromColorMap(mapData.colorMap, mapChunkSize, mapChunkSize)
                 );
             }
@@ -132,7 +132,7 @@ public class MapGenerator : MonoBehaviour {
 
     void MeshDataThread(MapData mapData, int lod, Action<MeshData> callBack)
     {
-        MeshData meshData = MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, lod);
+        MeshData meshData = TerrainMeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, lod);
         
         lock (meshDataThreadInfoQueue)
         {
