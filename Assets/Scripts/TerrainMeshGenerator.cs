@@ -8,7 +8,7 @@ public static class TerrainMeshGenerator {
         // To prevent weird artifacts due to AnimationCurve + multiThreading, we create an object for every thread.
         AnimationCurve heightCurve = new AnimationCurve(meshAnimationCurve.keys);
 
-        int meshSimplificationIncrement = (levelOfDetail == 0) ? 1 : levelOfDetail * 2;
+        int meshSimplificationIncrement = (levelOfDetail == 0) ? 1 : levelOfDetail;// * 2;
 
         int borderedSize = heightMap.GetLength(0);
         int meshSize = borderedSize - 2 * meshSimplificationIncrement;
@@ -51,6 +51,7 @@ public static class TerrainMeshGenerator {
 
                 // UV Index is a percentage based index, value between 0 - 1
                 Vector2 percent = new Vector2((x - meshSimplificationIncrement) / (float)meshSize, (y - meshSimplificationIncrement) / (float)meshSize);
+
                 float height = heightCurve.Evaluate(heightMap[x, y]) * heightMultiplier;
                 Vector3 vertexPosition = new Vector3(topLeftX + percent.x * meshSizeUnsimplified, height, topLeftZ - percent.y * meshSizeUnsimplified);
 
@@ -61,10 +62,12 @@ public static class TerrainMeshGenerator {
                 // i+w, i+w+1, i+w+2
                 // 
                 // i+2 and i+w+2  don't draw any triangles to their right or bottom, these are allready create when i+1 drawn both his triangles to right bottom 
+                //
+                // We have 2 triangles: i, i + w + 1, i + w ; and i + w + 1, i, i + 1; ( adc and dab)
                 // 
                 // Draws the needed triangles, 2 per vertex (creating a square)
                 // Drawing of a triangle allways happens clockwise.
-                if (x < borderedSize -1 && y < borderedSize - 1)
+                if (x < borderedSize -1 && y < borderedSize - 1)    
                 {
                     int a = vertexIndicesMap[x, y];
                     int b = vertexIndicesMap[x + meshSimplificationIncrement, y];
@@ -131,7 +134,8 @@ public class MeshData
             borderTriangles[borderTriangleIndex + 1] = b;
             borderTriangles[borderTriangleIndex + 2] = c;
             borderTriangleIndex += 3;
-        } else
+        }
+        else
         {
             triangles[triangleIndex] = a;
             triangles[triangleIndex + 1] = b;

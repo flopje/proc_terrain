@@ -19,7 +19,7 @@ public class MapGenerator : MonoBehaviour {
     public bool autoUpdate = true;
 
     public bool useFallOfMap;
-    public bool generateWaterMesh;
+    public bool generateWaterMesh = false;
 
     // Max square map size is 255 -> max vertices per mesh 65000 (a litte more)
     // for formula -> width -1 -> 241 - 1 = 240, whcihc in turn gives us the most LODs. 
@@ -52,7 +52,7 @@ public class MapGenerator : MonoBehaviour {
 
     void Awake()
     {
-        fallOfMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
+        fallOfMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize + 2);
     }
 
     public void DrawMapInEditor()
@@ -183,8 +183,8 @@ public class MapGenerator : MonoBehaviour {
    MapData generateMapData(Vector2 centre)
     {
         // Adding broderTriangles to correctly calculate normals: -> mapChunkSize + 2 (+2 == border, 1 on each side)
-        float[,] noiseMap = Noise.generateNoiseMap(mapChunkSize+2, mapChunkSize+2, noiseScale, seed, octaves, persistance, lacunarity, centre + offset, normalizeMode);
-        Color[] colorMap = CreateColorMap(noiseMap, mapChunkSize, mapChunkSize);
+        float[,] noiseMap = Noise.generateNoiseMap(mapChunkSize + 2, mapChunkSize + 2, noiseScale, seed, octaves, persistance, lacunarity, centre + offset, normalizeMode);
+        Color[] colorMap = CreateColorMap(noiseMap, mapChunkSize + 2, mapChunkSize + 2);
 
         return new MapData(noiseMap, colorMap);         
     }
@@ -251,7 +251,7 @@ public class MapGenerator : MonoBehaviour {
             octaves = 0;
         }
 
-        fallOfMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
+        fallOfMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize + 2);
     }
 }
 
