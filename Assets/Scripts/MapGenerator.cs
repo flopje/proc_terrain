@@ -19,11 +19,12 @@ public class MapGenerator : MonoBehaviour {
     public bool autoUpdate = true;
 
     public bool useFallOfMap;
-    public bool generateWaterMesh;
+    public bool generateWaterMesh = false;
 
     // Max square map size is 255 -> max vertices per mesh 65000 (a litte more)
     // for formula -> width -1 -> 241 - 1 = 240, whcihc in turn gives us the most LODs. 
-    public const int mapChunkSize = 241;
+    // Adding 2 for borderTriangles -> 241 - 2 = 239
+    public const int mapChunkSize = 239;
 
     [Range(0,6)]
     public int editorPreviewLOD;
@@ -51,7 +52,7 @@ public class MapGenerator : MonoBehaviour {
 
     void Awake()
     {
-        fallOfMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
+        fallOfMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize + 2);
     }
 
     public void DrawMapInEditor()
@@ -72,7 +73,7 @@ public class MapGenerator : MonoBehaviour {
             if (generateWaterMesh)
             {
                 mapDisplay.DrawMesh(
-                MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD),
+                TerrainMeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD),
                 WaterMeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, editorPreviewLOD),
                 TextureGenerator.TextureFromColorMap(mapData.colorMap, mapChunkSize, mapChunkSize)
                 );
@@ -80,7 +81,7 @@ public class MapGenerator : MonoBehaviour {
             else
             {
                 mapDisplay.DrawMesh(
-                MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD),
+                TerrainMeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD),
                 TextureGenerator.TextureFromColorMap(mapData.colorMap, mapChunkSize, mapChunkSize)
                 );
             }
@@ -131,7 +132,7 @@ public class MapGenerator : MonoBehaviour {
 
     void MeshDataThread(MapData mapData, int lod, Action<MeshData> callBack)
     {
-        MeshData meshData = MeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, lod);
+        MeshData meshData = TerrainMeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, lod);
         
         lock (meshDataThreadInfoQueue)
         {
@@ -181,8 +182,9 @@ public class MapGenerator : MonoBehaviour {
 
    MapData generateMapData(Vector2 centre)
     {
-        float[,] noiseMap = Noise.generateNoiseMap(mapChunkSize, mapChunkSize, noiseScale, seed, octaves, persistance, lacunarity, centre + offset, normalizeMode);
-        Color[] colorMap = CreateColorMap(noiseMap, mapChunkSize, mapChunkSize);
+        // Adding broderTriangles to correctly calculate normals: -> mapChunkSize + 2 (+2 == border, 1 on each side)
+        float[,] noiseMap = Noise.generateNoiseMap(mapChunkSize + 2, mapChunkSize + 2, noiseScale, seed, octaves, persistance, lacunarity, centre + offset, normalizeMode);
+        Color[] colorMap = CreateColorMap(noiseMap, mapChunkSize + 2, mapChunkSize + 2);
 
         return new MapData(noiseMap, colorMap);         
     }
@@ -249,7 +251,7 @@ public class MapGenerator : MonoBehaviour {
             octaves = 0;
         }
 
-        fallOfMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize);
+        fallOfMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize + 2);
     }
 }
 

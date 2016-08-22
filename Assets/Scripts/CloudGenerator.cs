@@ -20,7 +20,7 @@ public class CloudGenerator : MonoBehaviour {
 
     // Max square map size is 255 -> max vertices per mesh 65000 (a litte more)
     // for formula -> width -1 -> 241 - 1 = 240, whcihc in turn gives us the most LODs. 
-    public const int mapChunkSize = 241;
+    public const int mapChunkSize = 239;
 
     [Range(0, 6)]
     public int editorPreviewLOD;
@@ -60,7 +60,7 @@ public class CloudGenerator : MonoBehaviour {
         else if (drawMode == DrawMode.Mesh)
         {
             mapDisplay.DrawMesh(
-                MeshGenerator.GenerateTerrainMesh(cloudData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD),
+                TerrainMeshGenerator.GenerateTerrainMesh(cloudData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD),
                 TextureGenerator.TextureFromColorMap(cloudData.colorMap, mapChunkSize, mapChunkSize)
                 );
         }

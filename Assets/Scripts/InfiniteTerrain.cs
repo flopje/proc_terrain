@@ -11,7 +11,6 @@ public class InfiniteTerrain : MonoBehaviour
     public Transform viewer;
     public Material mapMaterial;
 
-    public bool generateWaterPlane = false;
     public Material waterMaterial;
 
     const float scale = 5f;
@@ -79,7 +78,7 @@ public class InfiniteTerrain : MonoBehaviour
                 }
                 else
                 {
-                    terrainChunkDictionary.Add(viewedChunkCoord, new TerrainChunk(viewedChunkCoord, chunkSize, detailLevels, transform, mapMaterial, generateWaterPlane, waterMaterial));
+                    terrainChunkDictionary.Add(viewedChunkCoord, new TerrainChunk(viewedChunkCoord, chunkSize, detailLevels, transform, mapMaterial, mapGenerator.generateWaterMesh, waterMaterial));
                 }
 
             }
@@ -110,13 +109,13 @@ public class InfiniteTerrain : MonoBehaviour
 
         bool generateWaterPlane;
 
-        public TerrainChunk(Vector2 coord, int size, LODInfo[] detailLevels, Transform parent, Material material, bool generateWaterPlane, Material waterMaterial)
+        public TerrainChunk(Vector2 coord, int chunkSize, LODInfo[] detailLevels, Transform parent, Material material, bool generateWaterPlane, Material waterMaterial)
         {
             this.detailLevels = detailLevels;
             this.generateWaterPlane = generateWaterPlane;
 
-            position = coord * size;
-            bounds = new Bounds(position, Vector2.one * size);
+            position = coord * chunkSize;
+            bounds = new Bounds(position, Vector2.one * chunkSize);
             Vector3 positionV3 = new Vector3(position.x, 0, position.y);
 
             meshObject = new GameObject("Terrain Chunk");
@@ -133,6 +132,7 @@ public class InfiniteTerrain : MonoBehaviour
             if (generateWaterPlane)
             {
                 waterMeshObject = new GameObject("Tile");
+                waterMeshObject.layer = 4; // Built-in layer 4 == water
                 waterMeshFilter = waterMeshObject.AddComponent<MeshFilter>();
                 waterMeshRenderer = waterMeshObject.AddComponent<MeshRenderer>();
 
@@ -194,6 +194,11 @@ public class InfiniteTerrain : MonoBehaviour
                     if (lodMesh.hasMesh)
                     {
                         previousLODIndex = lodIndex;
+                        meshFilter.mesh = lodMesh.mesh;
+                        if (generateWaterPlane)
+                        {
+                            waterMeshFilter.mesh = lodMesh.waterMesh;
+                        }
                         meshFilter.sharedMesh = lodMesh.mesh;
                         if (meshCollider == null)
                         {
@@ -225,7 +230,7 @@ public class InfiniteTerrain : MonoBehaviour
             this.mapData = mapData;
             mapDataReceived = true;
 
-            Texture2D texture = TextureGenerator.TextureFromColorMap(mapData.colorMap, MapGenerator.mapChunkSize, MapGenerator.mapChunkSize);
+            Texture2D texture = TextureGenerator.TextureFromColorMap(mapData.colorMap, MapGenerator.mapChunkSize + 2, MapGenerator.mapChunkSize + 2);
             meshRenderer.material.mainTexture = texture;
 
             UpdateTerrainChunk();
@@ -234,9 +239,10 @@ public class InfiniteTerrain : MonoBehaviour
         public void SetVisible(bool visible)
         {
             meshObject.SetActive(visible);
-            waterMeshObject.SetActive(visible);
-
-
+            if (waterMeshObject != null)
+            {
+                waterMeshObject.SetActive(visible);
+            }
         }
 
         public bool IsVisible()
@@ -264,7 +270,7 @@ public class InfiniteTerrain : MonoBehaviour
         System.Action updateCallback;
 
         public LODMesh(int lod, System.Action updateCallback, bool generateWaterPlane)
-        {
+        {   
             this.lod = lod;
             this.updateCallback = updateCallback;
             this.generateWaterPlane = generateWaterPlane;
@@ -276,7 +282,6 @@ public class InfiniteTerrain : MonoBehaviour
             hasRequestMesh = true;
 
             mapGenerator.RequestMeshData(this.mapData, lod, OnMeshDataReceived);
-
         }
 
         void OnMeshDataReceived(MeshData meshData)
