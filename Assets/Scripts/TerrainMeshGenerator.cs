@@ -8,7 +8,7 @@ public static class TerrainMeshGenerator {
         // To prevent weird artifacts due to AnimationCurve + multiThreading, we create an object for every thread.
         AnimationCurve heightCurve = new AnimationCurve(meshAnimationCurve.keys);
 
-        int meshSimplificationIncrement = (levelOfDetail == 0) ? 1 : levelOfDetail;// * 2;
+        int meshSimplificationIncrement = (levelOfDetail == 0) ? 2 : levelOfDetail * 2;
 
         int borderedSize = heightMap.GetLength(0);
         int meshSize = borderedSize - 2 * meshSimplificationIncrement;
@@ -81,6 +81,8 @@ public static class TerrainMeshGenerator {
             }
         }
 
+        meshData.BakeNormals();
+
         return meshData;
     }    
 }
@@ -93,6 +95,8 @@ public class MeshData
 
     Vector3[] borderVertices;
     int[] borderTriangles;
+
+    Vector3[] bakedNormals;
 
     int triangleIndex;
     int borderTriangleIndex;
@@ -209,6 +213,11 @@ public class MeshData
         return Vector3.Cross(sideAB, sideAC).normalized;  
     }
 
+    public void BakeNormals()
+    {
+        bakedNormals = CalculateNormals();
+    }
+
     public Mesh CreateMesh()
     {
         Mesh mesh = new Mesh();
@@ -217,7 +226,7 @@ public class MeshData
         mesh.uv = uvs;
 
         // RecalculateNormals needed for correct lighting
-        mesh.normals = CalculateNormals();
+        mesh.normals = bakedNormals;
 
         return mesh;
     }

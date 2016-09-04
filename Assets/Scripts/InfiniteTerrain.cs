@@ -13,7 +13,7 @@ public class InfiniteTerrain : MonoBehaviour
 
     public Material waterMaterial;
 
-    const float scale = 5f;
+    const float scale = 2f;
 
     const float viewerMoveThresholdForChunkUpdate = 25f;
     const float sqrViewerMoveThresholdForChunkUpdate = viewerMoveThresholdForChunkUpdate * viewerMoveThresholdForChunkUpdate;
@@ -102,6 +102,7 @@ public class InfiniteTerrain : MonoBehaviour
 
         LODInfo[] detailLevels;
         LODMesh[] lodMeshes;
+        LODMesh collisionLODMesh;
 
         MapData mapData;
         bool mapDataReceived;
@@ -121,6 +122,7 @@ public class InfiniteTerrain : MonoBehaviour
             meshObject = new GameObject("Terrain Chunk");
             meshRenderer = meshObject.AddComponent<MeshRenderer>();
             meshFilter = meshObject.AddComponent<MeshFilter>();
+            meshCollider = meshObject.AddComponent<MeshCollider>();
 
             meshRenderer.sharedMaterial = material;
 
@@ -155,6 +157,10 @@ public class InfiniteTerrain : MonoBehaviour
             for (int i = 0; i < detailLevels.Length; i++)
             {
                 lodMeshes[i] = new LODMesh(detailLevels[i].lod, UpdateTerrainChunk, generateWaterPlane);
+                if(detailLevels[i].useForCollider)
+                {
+                    collisionLODMesh = lodMeshes[i];
+                }
             }
 
             mapGenerator.RequestMapData(position, OnMapDataReceived);
@@ -195,27 +201,33 @@ public class InfiniteTerrain : MonoBehaviour
                     {
                         previousLODIndex = lodIndex;
                         meshFilter.mesh = lodMesh.mesh;
+
                         if (generateWaterPlane)
                         {
                             waterMeshFilter.mesh = lodMesh.waterMesh;
                         }
                         meshFilter.sharedMesh = lodMesh.mesh;
-                        if (meshCollider == null)
-                        {
-                            meshCollider = meshObject.AddComponent<MeshCollider>();
-                        }
-                        meshCollider.sharedMesh = null;
-                        meshCollider.sharedMesh = lodMesh.mesh;
 
                         if (generateWaterPlane)
                         {
                             waterMeshFilter.sharedMesh = lodMesh.waterMesh;
                         }
-
                     }
                     else if (!lodMesh.hasRequestMesh)
                     {
                         lodMesh.RequestMesh(mapData);
+                    }
+                }
+
+                if(lodIndex == 0)
+                {
+                    if(collisionLODMesh.hasMesh)
+                    {
+                        meshCollider.sharedMesh = collisionLODMesh.mesh;
+                    }
+                    else if(!collisionLODMesh.hasRequestMesh)
+                    {
+                        collisionLODMesh.RequestMesh(mapData);
                     }
                 }
 
@@ -313,6 +325,7 @@ public class InfiniteTerrain : MonoBehaviour
     {
         public int lod;
         public float visibleDistThreshold;
+        public bool useForCollider;
     }
 
 }
