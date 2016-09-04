@@ -8,7 +8,7 @@ public static class TerrainMeshGenerator {
         // To prevent weird artifacts due to AnimationCurve + multiThreading, we create an object for every thread.
         AnimationCurve heightCurve = new AnimationCurve(meshAnimationCurve.keys);
 
-        int meshSimplificationIncrement = (levelOfDetail == 0) ? 2 : levelOfDetail * 2;
+        int meshSimplificationIncrement = (levelOfDetail == 0) ? 1 : levelOfDetail * 2;
 
         int borderedSize = heightMap.GetLength(0);
         int meshSize = borderedSize - 2 * meshSimplificationIncrement;
