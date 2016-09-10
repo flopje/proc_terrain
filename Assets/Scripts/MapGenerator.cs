@@ -20,11 +20,7 @@ public class MapGenerator : MonoBehaviour {
 
     public bool useFallOfMap;
     public bool generateWaterMesh = false;
-
-    // Max square map size is 255 -> max vertices per mesh 65000 (a litte more)
-    // for formula -> width -1 -> 241 - 1 = 240, whcihc in turn gives us the most LODs. 
-    // Adding 2 for borderTriangles -> 241 - 2 = 239
-    public const int mapChunkSize = 239;
+    public bool usetFlatShading;
 
     [Range(0,6)]
     public int editorPreviewLOD;
@@ -43,6 +39,7 @@ public class MapGenerator : MonoBehaviour {
     public Vector2 offset = Vector2.one;
 
     public TerrainType[] regions;
+    static MapGenerator instance;
 
     float[,] fallOfMap;
 
@@ -53,6 +50,25 @@ public class MapGenerator : MonoBehaviour {
     void Awake()
     {
         fallOfMap = FalloffGenerator.GenerateFalloffMap(mapChunkSize + 2);
+    }
+
+    // Max square map size is 255 -> max vertices per mesh 65000 (a litte more)
+    // for formula -> width -1 -> 241 - 1 = 240, whcihc in turn gives us the most LODs. 
+    // Subtracting 2 for borderTriangles -> 241 - 2 = 239
+    //
+    // For flatshading we lower the size to 95, Because it generates double the amount of vertices.
+    public static int mapChunkSize {
+        get {
+            if(instance == null) {
+                instance = FindObjectOfType<MapGenerator>();
+            }
+
+            if(instance.usetFlatShading) {
+                return 95;
+            } else {
+                return 239;
+            }
+        }
     }
 
     public void DrawMapInEditor()
@@ -73,7 +89,7 @@ public class MapGenerator : MonoBehaviour {
             if (generateWaterMesh)
             {
                 mapDisplay.DrawMesh(
-                    TerrainMeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD),
+                    TerrainMeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD, usetFlatShading),
                     WaterMeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, editorPreviewLOD),
                     TextureGenerator.TextureFromColorMap(mapData.colorMap, mapChunkSize + 2, mapChunkSize + 2)
                 );
@@ -81,7 +97,7 @@ public class MapGenerator : MonoBehaviour {
             else
             {
                 mapDisplay.DrawMesh(
-                    TerrainMeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD),
+                    TerrainMeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, editorPreviewLOD, usetFlatShading),
                     TextureGenerator.TextureFromColorMap(mapData.colorMap, mapChunkSize, mapChunkSize)
                 );
             }
@@ -132,7 +148,7 @@ public class MapGenerator : MonoBehaviour {
 
     void MeshDataThread(MapData mapData, int lod, Action<MeshData> callBack)
     {
-        MeshData meshData = TerrainMeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, lod);
+        MeshData meshData = TerrainMeshGenerator.GenerateTerrainMesh(mapData.heightMap, meshHeightMultiplier, meshHeightCurve, lod, usetFlatShading);
         
         lock (meshDataThreadInfoQueue)
         {
